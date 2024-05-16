@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7403936522203346983}
   - component: {fileID: 4385181167880970749}
   - component: {fileID: 4425125139341647316}
+  - component: {fileID: 8080305928678100199}
   m_Layer: 0
   m_Name: GrassPrefab
   m_TagString: HexTile
@@ -85,3 +86,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8080305928678100199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2302830783855386233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd1e4a52deaf4a8f0a650ebe81c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coordinates: {x: 0, y: 0}
+  noiseValue: 0

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2645308424295042516}
   - component: {fileID: 4460662319636978847}
   - component: {fileID: 1469291134806920501}
+  - component: {fileID: -7358621900174403799}
   m_Layer: 0
   m_Name: RoadPrefab
   m_TagString: HexTile
@@ -85,3 +86,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-7358621900174403799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4894632725445276631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd1e4a52deaf4a8f0a650ebe81c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coordinates: {x: 0, y: 0}
+  noiseValue: 0

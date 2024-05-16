@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5643045856439395855}
   - component: {fileID: 5087606203155462364}
   - component: {fileID: 4592163943192117792}
+  - component: {fileID: -4722654909972421606}
   m_Layer: 0
   m_Name: WaterPrefab
   m_TagString: HexTile
@@ -85,3 +86,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-4722654909972421606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6570252876355183880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd1e4a52deaf4a8f0a650ebe81c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coordinates: {x: 0, y: 0}
+  noiseValue: 0
