@@ -1,12 +1,13 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-
-
 public class WorldGenerator : Singleton<WorldGenerator>
 {
     [SerializeField]
     private NoiseSettings noiseSettings = new NoiseSettings();
+
+    [SerializeField]
+    private RegionSettings regionSettings = new RegionSettings();
 
     private Texture2D noiseTexture;
 
@@ -28,6 +29,9 @@ public class WorldGenerator : Singleton<WorldGenerator>
     {
         float[,] noiseMap = Noise.GenerateNoiseMap(noiseSettings);
         DrawNoiseMap(noiseMap);
+
+        HexMapGenerator hexMapGen = HexMapGenerator.Instance;
+        hexMapGen.GenerateHexMap(noiseMap, regionSettings);
     }
 
     private void DrawNoiseMap(float[,] noiseMap)
@@ -51,6 +55,16 @@ public class WorldGenerator : Singleton<WorldGenerator>
     public NoiseSettings GetNoiseSettings()
     {
         return noiseSettings;
+    }
+
+    public RegionSettings GetRegionSettings()
+    {
+        return regionSettings;
+    }
+
+    public void SetRegionSettings(RegionSettings settings)
+    {
+        regionSettings = settings;
     }
 
     public Texture2D GetNoiseTexture()

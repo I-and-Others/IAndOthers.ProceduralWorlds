@@ -2,45 +2,55 @@
 
 public class HexMapGenerator : Singleton<HexMapGenerator>
 {
-    public GameObject hexPrefab;
-    public int mapWidth = 6;
-    public int mapHeight = 6;
-    public float hexSize = 1f;
-
-    public enum HexOrientation { OddR, EvenR, OddQ, EvenQ }
-    public HexOrientation hexOrientation;
-
-    public float hexWidth;
-    public float hexHeight;
+    public HexMapSettings Settings;
 
     private void OnValidate()
     {
         CalculateHexDimensions();
     }
 
-    public void GenerateHexMap()
+    public void GenerateHexMap(float[,] noiseMap, RegionSettings regionSettings)
     {
         CalculateHexDimensions();
         ClearMap();
 
-        for (int x = 0; x < mapWidth; x++)
+        for (int x = 0; x < Settings.mapWidth; x++)
         {
-            for (int y = 0; y < mapHeight; y++)
+            for (int y = 0; y < Settings.mapHeight; y++)
             {
                 Vector3 position = CalculateHexPosition(x, y);
                 Quaternion rotation = Quaternion.identity;
 
                 // Apply rotation for pointy-top hexagons (OddQ, EvenQ)
-                if (hexOrientation == HexOrientation.OddQ || hexOrientation == HexOrientation.EvenQ)
+                if (Settings.hexOrientation == HexOrientationEnum.OddQ || Settings.hexOrientation == HexOrientationEnum.EvenQ)
                 {
                     rotation = Quaternion.Euler(0, 30, 0);
                 }
+
+                // Get the noise value for this hex
+                float noiseValue = noiseMap[(int)(x * (noiseMap.GetLength(0) / (float)Settings.mapWidth)), (int)(y * (noiseMap.GetLength(1) / (float)Settings.mapHeight))];
+
+                // Determine the appropriate prefab based on the noise value
+                GameObject hexPrefab = GetPrefabForNoiseValue(noiseValue, regionSettings);
 
                 GameObject hexGO = Instantiate(hexPrefab, position, rotation, this.transform);
                 Hex hex = hexGO.GetComponent<Hex>();
                 hex.Initialize(new Vector2Int(x, y));
             }
         }
+    }
+
+    private GameObject GetPrefabForNoiseValue(float noiseValue, RegionSettings regionSettings)
+    {
+        foreach (var region in regionSettings.regions)
+        {
+            if (noiseValue >= region.minValue && noiseValue <= region.maxValue)
+            {
+                return region.prefab;
+            }
+        }
+        // Default to base hex prefab if no region matches
+        return Settings.hexPrefab;
     }
 
     private void ClearMap()
@@ -53,15 +63,15 @@ public class HexMapGenerator : Singleton<HexMapGenerator>
 
     private void CalculateHexDimensions()
     {
-        if (hexOrientation == HexOrientation.OddR || hexOrientation == HexOrientation.EvenR)
+        if (Settings.hexOrientation == HexOrientationEnum.OddR || Settings.hexOrientation == HexOrientationEnum.EvenR)
         {
-            hexWidth = Mathf.Sqrt(3) * hexSize;
-            hexHeight = 2 * hexSize;
+            Settings.hexWidth = Mathf.Sqrt(3) * Settings.hexSize;
+            Settings.hexHeight = 2 * Settings.hexSize;
         }
-        else if (hexOrientation == HexOrientation.OddQ || hexOrientation == HexOrientation.EvenQ)
+        else if (Settings.hexOrientation == HexOrientationEnum.OddQ || Settings.hexOrientation == HexOrientationEnum.EvenQ)
         {
-            hexWidth = 2 * hexSize;
-            hexHeight = Mathf.Sqrt(3) * hexSize;
+            Settings.hexWidth = 2 * Settings.hexSize;
+            Settings.hexHeight = Mathf.Sqrt(3) * Settings.hexSize;
         }
     }
 
@@ -70,26 +80,26 @@ public class HexMapGenerator : Singleton<HexMapGenerator>
         float xPos = 0f;
         float zPos = 0f;
 
-        if (hexOrientation == HexOrientation.OddR || hexOrientation == HexOrientation.EvenR)
+        if (Settings.hexOrientation == HexOrientationEnum.OddR || Settings.hexOrientation == HexOrientationEnum.EvenR)
         {
-            xPos = x * hexWidth;
-            zPos = y * (hexHeight * 0.75f);
+            xPos = x * Settings.hexWidth;
+            zPos = y * (Settings.hexHeight * 0.75f);
 
-            if ((hexOrientation == HexOrientation.OddR && y % 2 == 1) ||
-                (hexOrientation == HexOrientation.EvenR && y % 2 == 0))
+            if ((Settings.hexOrientation == HexOrientationEnum.OddR && y % 2 == 1) ||
+                (Settings.hexOrientation == HexOrientationEnum.EvenR && y % 2 == 0))
             {
-                xPos += hexWidth / 2f;
+                xPos += Settings.hexWidth / 2f;
             }
         }
-        else if (hexOrientation == HexOrientation.OddQ || hexOrientation == HexOrientation.EvenQ)
+        else if (Settings.hexOrientation == HexOrientationEnum.OddQ || Settings.hexOrientation == HexOrientationEnum.EvenQ)
         {
-            xPos = x * (hexWidth * 0.75f);
-            zPos = y * hexHeight;
+            xPos = x * (Settings.hexWidth * 0.75f);
+            zPos = y * Settings.hexHeight;
 
-            if ((hexOrientation == HexOrientation.OddQ && x % 2 == 1) ||
-                (hexOrientation == HexOrientation.EvenQ && x % 2 == 0))
+            if ((Settings.hexOrientation == HexOrientationEnum.OddQ && x % 2 == 1) ||
+                (Settings.hexOrientation == HexOrientationEnum.EvenQ && x % 2 == 0))
             {
-                zPos += hexHeight / 2f;
+                zPos += Settings.hexHeight / 2f;
             }
         }
 

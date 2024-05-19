@@ -6,6 +6,7 @@ public class WorldGeneratorEditor : Editor
 {
     bool showPerlinNoiseSettings = true;
     bool showHexMapSettings = true;
+    bool showRegionSettings = true;
 
     public override void OnInspectorGUI()
     {
@@ -54,21 +55,31 @@ public class WorldGeneratorEditor : Editor
         if (showHexMapSettings)
         {
             EditorGUI.indentLevel++;
-            hexMapGen.hexPrefab = (GameObject)EditorGUILayout.ObjectField("Hex Prefab", hexMapGen.hexPrefab, typeof(GameObject), false);
-            hexMapGen.mapWidth = EditorGUILayout.IntField("Map Width", hexMapGen.mapWidth);
-            hexMapGen.mapHeight = EditorGUILayout.IntField("Map Height", hexMapGen.mapHeight);
-            hexMapGen.hexSize = EditorGUILayout.FloatField("Hex Size", hexMapGen.hexSize);
-            hexMapGen.hexOrientation = (HexMapGenerator.HexOrientation)EditorGUILayout.EnumPopup("Hex Orientation", hexMapGen.hexOrientation);
+            hexMapGen.Settings.hexPrefab = (GameObject)EditorGUILayout.ObjectField("Hex Prefab", hexMapGen.Settings.hexPrefab, typeof(GameObject), false);
+            hexMapGen.Settings.mapWidth = EditorGUILayout.IntField("Map Width", hexMapGen.Settings.mapWidth);
+            hexMapGen.Settings.mapHeight = EditorGUILayout.IntField("Map Height", hexMapGen.Settings.mapHeight);
+            hexMapGen.Settings.hexSize = EditorGUILayout.FloatField("Hex Size", hexMapGen.Settings.hexSize);
+            hexMapGen.Settings.hexOrientation = (HexOrientationEnum)EditorGUILayout.EnumPopup("Hex Orientation", hexMapGen.Settings.hexOrientation);
 
             // Display calculated hex width and height
-            EditorGUILayout.LabelField("Calculated Hex Width", hexMapGen.hexWidth.ToString("F2"));
-            EditorGUILayout.LabelField("Calculated Hex Height", hexMapGen.hexHeight.ToString("F2"));
+            EditorGUILayout.LabelField("Calculated Hex Width", hexMapGen.Settings.hexWidth.ToString("F2"));
+            EditorGUILayout.LabelField("Calculated Hex Height", hexMapGen.Settings.hexHeight.ToString("F2"));
             EditorGUI.indentLevel--;
         }
+
+        // Region Settings Foldout
+        showRegionSettings = EditorGUILayout.Foldout(showRegionSettings, "Region Settings");
+        if (showRegionSettings)
+        {
+            EditorGUI.indentLevel++;
+            worldGen.SetRegionSettings((RegionSettings)EditorGUILayout.ObjectField("Region Settings", worldGen.GetRegionSettings(), typeof(RegionSettings), false));
+            EditorGUI.indentLevel--;
+        }
+
+
         // Generate Hex Map Button
         if (GUILayout.Button("Generate Hex Map"))
         {
-            hexMapGen.GenerateHexMap();
         }
 
         // Auto update when GUI changes
@@ -76,7 +87,6 @@ public class WorldGeneratorEditor : Editor
         {
             worldGen.GenerateWorld();
             EditorUtility.SetDirty(hexMapGen);
-            hexMapGen.GenerateHexMap();
         }
     }
 }
