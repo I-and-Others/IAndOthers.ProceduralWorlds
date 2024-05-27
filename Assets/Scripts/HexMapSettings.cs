@@ -1,15 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-[System.Serializable]
-public class HexMapSettings
+[CreateAssetMenu(fileName = "HexMapSettings", menuName = "Hex/HexMapSettings")]
+public class HexMapSettings : ScriptableObject
 {
     public GameObject hexPrefab;
-    public int mapWidth = 6;
-    public int mapHeight = 6;
-    public float hexSize = 1f;
-
+    public int mapWidth;
+    public int mapHeight;
+    public float hexSize;
     public HexOrientationEnum hexOrientation;
-
     public float hexWidth;
     public float hexHeight;
+    public List<HexTile> hexTiles;
 }

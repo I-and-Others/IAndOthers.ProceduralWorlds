@@ -59,8 +59,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -98,5 +96,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378dd1e4a52deaf4a8f0a650ebe81c70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hexTile: {fileID: 11400000, guid: 0c347ffa61924234a87b8bd97be2bec6, type: 2}
   coordinates: {x: 0, y: 0}
-  noiseValue: 0

@@ -1,18 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class HexMapGenerator : Singleton<HexMapGenerator>
+public class HexMapGenerator : MonoBehaviour
 {
     public HexMapSettings Settings;
+    public List<HexTile> hexTiles;
 
     private void OnValidate()
     {
         CalculateHexDimensions();
     }
 
-    public void GenerateHexMap(float[,] noiseMap, RegionSettings regionSettings)
+    public void GenerateHexMap()
     {
         CalculateHexDimensions();
         ClearMap();
+
+        WaveFunctionCollapse wfc = new WaveFunctionCollapse(Settings.mapWidth, Settings.mapHeight, hexTiles);
+        HexTile[,] generatedMap = wfc.GenerateMap();
 
         for (int x = 0; x < Settings.mapWidth; x++)
         {
@@ -27,30 +32,14 @@ public class HexMapGenerator : Singleton<HexMapGenerator>
                     rotation = Quaternion.Euler(0, 30, 0);
                 }
 
-                // Get the noise value for this hex
-                float noiseValue = noiseMap[(int)(x * (noiseMap.GetLength(0) / (float)Settings.mapWidth)), (int)(y * (noiseMap.GetLength(1) / (float)Settings.mapHeight))];
-
-                // Determine the appropriate prefab based on the noise value
-                GameObject hexPrefab = GetPrefabForNoiseValue(noiseValue, regionSettings);
-
-                GameObject hexGO = Instantiate(hexPrefab, position, rotation, this.transform);
-                Hex hex = hexGO.GetComponent<Hex>();
-                hex.Initialize(new Vector2Int(x, y));
+                if (generatedMap[x, y] != null)
+                {
+                    GameObject hexGO = Instantiate(generatedMap[x, y].prefab, position, rotation, this.transform);
+                    Hex hex = hexGO.GetComponent<Hex>();
+                    hex.Initialize(new Vector2Int(x, y));
+                }
             }
         }
-    }
-
-    private GameObject GetPrefabForNoiseValue(float noiseValue, RegionSettings regionSettings)
-    {
-        foreach (var region in regionSettings.regions)
-        {
-            if (noiseValue >= region.minValue && noiseValue <= region.maxValue)
-            {
-                return region.prefab;
-            }
-        }
-        // Default to base hex prefab if no region matches
-        return Settings.hexPrefab;
     }
 
     private void ClearMap()
