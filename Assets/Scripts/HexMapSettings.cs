@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "HexMapSettings", menuName = "Hex/HexMapSettings")]
-public class HexMapSettings : ScriptableObject
+[System.Serializable]
+public class HexMapSettings
 {
     public GameObject hexPrefab;
     public int mapWidth;
@@ -11,5 +11,4 @@ public class HexMapSettings : ScriptableObject
     public HexOrientationEnum hexOrientation;
     public float hexWidth;
     public float hexHeight;
-    public List<HexTile> hexTiles;
 }

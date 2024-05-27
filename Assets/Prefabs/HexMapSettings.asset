@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f5be975ce6a31547839662b9c4422d8, type: 3}
   m_Name: HexMapSettings
   m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 0}
+  hexPrefab: {fileID: 2302830783855386233, guid: a52a845fdb22eb743b9e466c84337910,
+    type: 3}
   mapWidth: 12
   mapHeight: 9
   hexSize: 1.15
   hexOrientation: 0
+  hexWidth: 1.9918584
+  hexHeight: 2.3
   hexTiles:
   - {fileID: 11400000, guid: f456a14ac8468f04797a30b4a62863af, type: 2}
-  hexWidth: 0
-  hexHeight: 0
-  HexMapGenerator: {fileID: 0}

@@ -4,20 +4,11 @@ using UnityEngine;
 public class HexMapGenerator : MonoBehaviour
 {
     public HexMapSettings Settings;
-    public List<HexTile> hexTiles;
-
-    private void OnValidate()
-    {
-        CalculateHexDimensions();
-    }
 
     public void GenerateHexMap()
     {
         CalculateHexDimensions();
         ClearMap();
-
-        WaveFunctionCollapse wfc = new WaveFunctionCollapse(Settings.mapWidth, Settings.mapHeight, hexTiles);
-        HexTile[,] generatedMap = wfc.GenerateMap();
 
         for (int x = 0; x < Settings.mapWidth; x++)
         {
@@ -32,12 +23,12 @@ public class HexMapGenerator : MonoBehaviour
                     rotation = Quaternion.Euler(0, 30, 0);
                 }
 
-                if (generatedMap[x, y] != null)
-                {
-                    GameObject hexGO = Instantiate(generatedMap[x, y].prefab, position, rotation, this.transform);
-                    Hex hex = hexGO.GetComponent<Hex>();
-                    hex.Initialize(new Vector2Int(x, y));
-                }
+                // Create an empty gameobject and name it with the coordinates
+                GameObject hexGO = Instantiate(Settings.hexPrefab, position, rotation, transform);
+                hexGO.name = $"Hex_{x}_{y}";
+                Hex hex = hexGO.GetComponent<Hex>();
+                hex.Initialize(new Vector2Int(x, y));
+                InitializeHexFaces(hex, x, y);
             }
         }
     }
@@ -93,5 +84,34 @@ public class HexMapGenerator : MonoBehaviour
         }
 
         return new Vector3(xPos, 0, zPos);
+    }
+
+    private void InitializeHexFaces(Hex hex, int x, int y)
+    {
+        // Lock the appropriate faces for border hexagons
+        if (x == 0)
+        {
+            hex.faceStates[4] = FaceStateEnum.Locked; // Leftmost face
+            if (y % 2 == 1)
+                hex.faceStates[5] = FaceStateEnum.Locked; // Top-left face for odd rows
+        }
+        if (x == Settings.mapWidth - 1)
+        {
+            hex.faceStates[1] = FaceStateEnum.Locked; // Rightmost face
+            if (y % 2 == 0)
+                hex.faceStates[2] = FaceStateEnum.Locked; // Bottom-right face for even rows
+        }
+        if (y == 0)
+        {
+            hex.faceStates[3] = FaceStateEnum.Locked; // Bottommost face
+            if (x % 2 == 1)
+                hex.faceStates[2] = FaceStateEnum.Locked; // Bottom-right face for odd columns
+        }
+        if (y == Settings.mapHeight - 1)
+        {
+            hex.faceStates[0] = FaceStateEnum.Locked; // Topmost face
+            if (x % 2 == 0)
+                hex.faceStates[5] = FaceStateEnum.Locked; // Top-left face for even columns
+        }
     }
 }
