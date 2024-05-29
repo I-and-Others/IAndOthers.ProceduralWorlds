@@ -4,12 +4,16 @@ using UnityEngine;
 public class HexMapGenerator : MonoBehaviour
 {
     public HexMapSettings Settings;
+    private Hex[,] hexGrid;
 
     public void GenerateHexMap()
     {
         CalculateHexDimensions();
         ClearMap();
 
+        hexGrid = new Hex[Settings.mapWidth, Settings.mapHeight];
+
+        // Create hex tiles and store them in the array
         for (int x = 0; x < Settings.mapWidth; x++)
         {
             for (int y = 0; y < Settings.mapHeight; y++)
@@ -17,18 +21,25 @@ public class HexMapGenerator : MonoBehaviour
                 Vector3 position = CalculateHexPosition(x, y);
                 Quaternion rotation = Quaternion.identity;
 
-                // Apply rotation for pointy-top hexagons (OddQ, EvenQ)
                 if (Settings.hexOrientation == HexOrientationEnum.OddQ || Settings.hexOrientation == HexOrientationEnum.EvenQ)
                 {
                     rotation = Quaternion.Euler(0, 30, 0);
                 }
 
-                // Create an empty gameobject and name it with the coordinates
                 GameObject hexGO = Instantiate(Settings.hexPrefab, position, rotation, transform);
                 hexGO.name = $"Hex_{x}_{y}";
                 Hex hex = hexGO.GetComponent<Hex>();
                 hex.Initialize(new Vector2Int(x, y));
-                InitializeHexFaces(hex, x, y);
+                hexGrid[x, y] = hex;
+            }
+        }
+
+        // Update neighbors
+        for (int x = 0; x < Settings.mapWidth; x++)
+        {
+            for (int y = 0; y < Settings.mapHeight; y++)
+            {
+                SetNeighbors(hexGrid, x, y);
             }
         }
     }
@@ -86,32 +97,37 @@ public class HexMapGenerator : MonoBehaviour
         return new Vector3(xPos, 0, zPos);
     }
 
-    private void InitializeHexFaces(Hex hex, int x, int y)
+    private void SetNeighbors(Hex[,] hexGrid, int x, int y)
     {
-        // Lock the appropriate faces for border hexagons
-        if (x == 0)
+        Hex hex = hexGrid[x, y];
+
+        Vector2Int[] directions = {
+            new Vector2Int(+1, 0), new Vector2Int(+1, -1), new Vector2Int(0, -1),
+            new Vector2Int(-1, 0), new Vector2Int(-1, +1), new Vector2Int(0, +1)
+        };
+
+        for (int i = 0; i < directions.Length; i++)
         {
-            hex.faceStates[4] = FaceStateEnum.Locked; // Leftmost face
-            if (y % 2 == 1)
-                hex.faceStates[5] = FaceStateEnum.Locked; // Top-left face for odd rows
+            Vector2Int neighborAxial = hex.axialCoordinates + directions[i];
+            Vector2Int neighborOffset = AxialToOffset(neighborAxial);
+
+            if (IsWithinBounds(neighborOffset))
+            {
+                hex.neighbors[i] = hexGrid[neighborOffset.x, neighborOffset.y];
+            }
         }
-        if (x == Settings.mapWidth - 1)
-        {
-            hex.faceStates[1] = FaceStateEnum.Locked; // Rightmost face
-            if (y % 2 == 0)
-                hex.faceStates[2] = FaceStateEnum.Locked; // Bottom-right face for even rows
-        }
-        if (y == 0)
-        {
-            hex.faceStates[3] = FaceStateEnum.Locked; // Bottommost face
-            if (x % 2 == 1)
-                hex.faceStates[2] = FaceStateEnum.Locked; // Bottom-right face for odd columns
-        }
-        if (y == Settings.mapHeight - 1)
-        {
-            hex.faceStates[0] = FaceStateEnum.Locked; // Topmost face
-            if (x % 2 == 0)
-                hex.faceStates[5] = FaceStateEnum.Locked; // Top-left face for even columns
-        }
+    }
+
+    private bool IsWithinBounds(Vector2Int coordinates)
+    {
+        return coordinates.x >= 0 && coordinates.x < Settings.mapWidth &&
+               coordinates.y >= 0 && coordinates.y < Settings.mapHeight;
+    }
+
+    private Vector2Int AxialToOffset(Vector2Int axial)
+    {
+        int col = axial.x + (axial.y - (axial.y & 1)) / 2;
+        int row = axial.y;
+        return new Vector2Int(col, row);
     }
 }

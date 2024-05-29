@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5356965212404210653}
   - component: {fileID: 3062476952729793968}
   - component: {fileID: 6989560582867706656}
+  - component: {fileID: -5223126472739739100}
   m_Layer: 0
   m_Name: hex_road_L
   m_TagString: Untagged
@@ -83,3 +84,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-5223126472739739100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7954899905659554595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378dd1e4a52deaf4a8f0a650ebe81c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
+  coordinates: {x: 0, y: 0}
+  faceStates: 000000000000
+  neighbors:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
