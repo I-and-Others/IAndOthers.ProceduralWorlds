@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class HexMapGenerator : MonoBehaviour
+public class HexMapGenerator : Singleton<HexMapGenerator>
 {
     public HexMapSettings Settings;
-    private Hex[,] hexGrid;
+    public Hex[,] hexGrid;
 
     public void GenerateHexMap()
     {

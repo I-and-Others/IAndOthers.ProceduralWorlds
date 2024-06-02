@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CompatibilityRule", menuName = "ScriptableObjects/CompatibilityRule", order = 1)]
+[CreateAssetMenu(fileName = "CompatibilityRule", menuName = "Hex/CompatibilityRule")]
 public class CompatibilityRule : ScriptableObject
 {
-    public int prefabId; // Unique ID for the prefab
-    public List<FaceCompatibility> faceCompatibilities; // List of face compatibilities
+    public int prefabId;
+    public Dictionary<HexFaceDirectionEnum, List<FaceConnection>> faceConnections;
 
     [System.Serializable]
-    public struct FaceCompatibility
+    public struct FaceConnection
     {
-        public int faceIndex; // Index of the face (0-5)
-        public List<int> compatiblePrefabIds; // List of compatible prefab IDs for this face
+        public int targetPrefabId;
+        public HexFaceDirectionEnum targetFaceDirection;
+        public HexRotationEnum rotation;
     }
 }

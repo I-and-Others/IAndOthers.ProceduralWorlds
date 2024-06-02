@@ -12,9 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
   m_Name: hex_road_A_CompatibilityRule
   m_EditorClassIdentifier: 
-  prefabId: 1
-  faceCompatibilities:
-  - faceIndex: 0
-    compatiblePrefabIds: 0100000002000000
-  - faceIndex: 3
-    compatiblePrefabIds: 0100000002000000
+  prefabId: 0

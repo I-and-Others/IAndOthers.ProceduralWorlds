@@ -8,12 +8,6 @@ public class WorldGenerator : Singleton<WorldGenerator>
 
     private Texture2D noiseTexture;
 
-    //void OnValidate()
-    //{
-    //    ValidateSettings();
-    //    GenerateWorld();
-    //}
-
     private void ValidateSettings()
     {
         if (noiseSettings.mapWidth < 1) noiseSettings.mapWidth = 1;

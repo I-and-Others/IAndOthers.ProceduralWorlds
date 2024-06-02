@@ -1,182 +1,107 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class WaveFunctionCollapse
+public class WaveFunctionCollapse : MonoBehaviour
 {
-    private int mapWidth;
-    private int mapHeight;
-    private List<HexTile> hexTiles;
-    private HexTile[,] map;
+    public List<CompatibilityRule> rules;
 
-    public WaveFunctionCollapse(int width, int height, List<HexTile> tiles)
+    public void GenerateMap()
     {
-        mapWidth = width;
-        mapHeight = height;
-        hexTiles = tiles;
-        map = new HexTile[width, height];
-    }
+        Hex[,] hexGrid = HexMapGenerator.Instance.hexGrid;
+        List<Hex> hexList = new List<Hex>();
 
-    public HexTile[,] GenerateMap()
-    {
-        InitializeMap();
-        while (!IsCollapsed())
+        foreach (var hex in hexGrid)
         {
-            var cell = GetLowestEntropyCell();
-            if (cell == null)
-                break;
-
-            CollapseCell(cell.Value.Item1, cell.Value.Item2);
+            hexList.Add(hex);
         }
 
-        return map;
-    }
-
-    private void InitializeMap()
-    {
-        // Initialize all cells with all possible hex tiles
-        for (int x = 0; x < mapWidth; x++)
+        while (hexList.Count > 0)
         {
-            for (int y = 0; y < mapHeight; y++)
-            {
-                map[x, y] = null;
-            }
+            Hex hex = hexList[Random.Range(0, hexList.Count)];
+            hexList.Remove(hex);
+
+            CollapseHex(hex);
         }
     }
 
-    private bool IsCollapsed()
+    private void CollapseHex(Hex hex)
     {
-        for (int x = 0; x < mapWidth; x++)
+        // Select a random tile and rotation that fits the current constraints
+        var possibleTiles = GetPossibleTiles(hex);
+        if (possibleTiles.Count > 0)
         {
-            for (int y = 0; y < mapHeight; y++)
+            var selectedTile = possibleTiles[Random.Range(0, possibleTiles.Count)];
+            ApplyTile(hex, selectedTile);
+        }
+    }
+
+    private List<CompatibilityRule> GetPossibleTiles(Hex hex)
+    {
+        List<CompatibilityRule> possibleTiles = new List<CompatibilityRule>();
+
+        foreach (var rule in rules)
+        {
+            bool isCompatible = true;
+
+            for (int i = 0; i < 6; i++)
             {
-                if (map[x, y] == null)
+                var neighbor = hex.neighbors[i];
+                if (neighbor != null)
                 {
-                    return false;
+                    var neighborFace = (HexFaceDirectionEnum)i;
+                    var neighborState = neighbor.faceStates[i];
+
+                    if (neighborState == FaceStateEnum.Locked)
+                    {
+                        isCompatible = false;
+                        break;
+                    }
+
+                    var neighborRule = rules.Find(r => r.prefabId == neighbor.id);
+                    if (neighborRule != null)
+                    {
+                        bool faceCompatible = false;
+                        foreach (var connection in neighborRule.faceConnections[neighborFace])
+                        {
+                            if (connection.targetPrefabId == rule.prefabId)
+                            {
+                                faceCompatible = true;
+                                break;
+                            }
+                        }
+
+                        if (!faceCompatible)
+                        {
+                            isCompatible = false;
+                            break;
+                        }
+                    }
                 }
             }
-        }
-        return true;
-    }
 
-    private (int, int)? GetLowestEntropyCell()
-    {
-        // In this example, we simply return the first empty cell we find
-        for (int x = 0; x < mapWidth; x++)
-        {
-            for (int y = 0; y < mapHeight; y++)
+            if (isCompatible)
             {
-                if (map[x, y] == null)
-                {
-                    return (x, y);
-                }
+                possibleTiles.Add(rule);
             }
-        }
-        return null;
-    }
-
-    private void CollapseCell(int x, int y)
-    {
-        var possibleTiles = GetPossibleTilesForCell(x, y);
-
-        if (possibleTiles.Count == 0)
-        {
-            Debug.LogError($"No possible tiles for cell at ({x}, {y}).");
-            return;
-        }
-
-        HexTile selectedTile = possibleTiles[Random.Range(0, possibleTiles.Count)];
-        map[x, y] = selectedTile;
-
-        UpdateNeighbors(x, y, selectedTile);
-    }
-
-    private List<HexTile> GetPossibleTilesForCell(int x, int y)
-    {
-        var possibleTiles = new List<HexTile>(hexTiles);
-
-        // Check neighbors and reduce possible tiles accordingly
-        if (x > 0 && map[x - 1, y] != null)
-        {
-            possibleTiles = FilterPossibleTiles(possibleTiles, map[x - 1, y], HexSide.D);
-        }
-        if (x < mapWidth - 1 && map[x + 1, y] != null)
-        {
-            possibleTiles = FilterPossibleTiles(possibleTiles, map[x + 1, y], HexSide.A);
-        }
-        if (y > 0 && map[x, y - 1] != null)
-        {
-            possibleTiles = FilterPossibleTiles(possibleTiles, map[x, y - 1], HexSide.F);
-        }
-        if (y < mapHeight - 1 && map[x, y + 1] != null)
-        {
-            possibleTiles = FilterPossibleTiles(possibleTiles, map[x, y + 1], HexSide.B);
         }
 
         return possibleTiles;
     }
 
-    private List<HexTile> FilterPossibleTiles(List<HexTile> possibleTiles, HexTile neighborTile, HexSide side)
+    private void ApplyTile(Hex hex, CompatibilityRule rule)
     {
-        var filteredTiles = new List<HexTile>();
-
-        foreach (var tile in possibleTiles)
+        hex.id = rule.prefabId;
+        for (int i = 0; i < 6; i++)
         {
-            if (IsCompatible(tile, neighborTile, side))
+            var faceDirection = (HexFaceDirectionEnum)i;
+            foreach (var connection in rule.faceConnections[faceDirection])
             {
-                filteredTiles.Add(tile);
-            }
-        }
-
-        return filteredTiles;
-    }
-
-    private bool IsCompatible(HexTile tile, HexTile neighborTile, HexSide side)
-    {
-        var neighborSide = GetOppositeSide(side);
-
-        foreach (var face in tile.faces)
-        {
-            if (face.side == side)
-            {
-                foreach (var neighborOption in face.possibleNeighbors)
+                var neighbor = hex.neighbors[i];
+                if (neighbor != null)
                 {
-                    if (neighborOption.hexTile == neighborTile)
-                    {
-                        foreach (var compatibleFace in neighborOption.compatibleFaces)
-                        {
-                            foreach (var neighborFace in neighborTile.faces)
-                            {
-                                if (neighborFace.side == neighborSide && compatibleFace == neighborFace.side)
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
+                    neighbor.faceStates[(i + 3) % 6] = FaceStateEnum.Filled;
                 }
             }
         }
-
-        return false;
-    }
-
-    private HexSide GetOppositeSide(HexSide side)
-    {
-        switch (side)
-        {
-            case HexSide.A: return HexSide.D;
-            case HexSide.B: return HexSide.E;
-            case HexSide.C: return HexSide.F;
-            case HexSide.D: return HexSide.A;
-            case HexSide.E: return HexSide.B;
-            case HexSide.F: return HexSide.C;
-            default: return HexSide.A;
-        }
-    }
-
-    private void UpdateNeighbors(int x, int y, HexTile selectedTile)
-    {
-        // Update neighbor constraints based on the selected tile
-        // This part can be more complex depending on your needs
     }
 }
