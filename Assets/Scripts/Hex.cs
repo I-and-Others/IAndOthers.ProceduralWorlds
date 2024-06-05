@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Hex : MonoBehaviour
@@ -44,22 +45,32 @@ public class Hex : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 0.1f);
 
         Vector3[] facePositions = {
-            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, 0.5f), // A
-            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, 0.25f), // B
-            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, -0.25f), // C
-            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, -0.5f), // D
-            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, -0.25f), // E
-            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, 0.25f) // F
+            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, 0.5f), // NorthEast
+            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, 0.25f), // East
+            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, -0.25f), // SouthEast
+            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, -0.5f), // SouthWest
+            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, -0.25f), // West
+            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, 0.25f) // NorthWest
         };
 
         Color[] faceColors = {
-            Color.red,    // A
-            Color.green,  // B
-            Color.blue,   // C
-            Color.yellow, // D
-            Color.magenta,// E
-            Color.cyan    // F
+            Color.red,    // NorthEast
+            Color.green,  // East
+            Color.blue,   // SouthEast
+            Color.yellow, // SouthWest
+            Color.magenta,// West
+            Color.cyan    // NorthWest
         };
+        string[] directionLabels =
+        {
+            "NE", // NorthEast
+            "E",  // East
+            "SE", // SouthEast
+            "SW", // SouthWest
+            "W",  // West
+            "NW"  // NorthWest
+        };
+
 
         for (int i = 0; i < facePositions.Length; i++)
         {
@@ -81,6 +92,12 @@ public class Hex : MonoBehaviour
                     Gizmos.DrawSphere(transform.position + facePositions[i], 0.1f);
                     break;
             }
+
+            // Draw the direction label
+            GUIStyle labelStyle = new GUIStyle();
+            labelStyle.normal.textColor = faceColors[i];
+            Handles.Label(transform.position + facePositions[i] * 1.5f, directionLabels[i], labelStyle);
+
         }
 
         // Draw the coordinates as text

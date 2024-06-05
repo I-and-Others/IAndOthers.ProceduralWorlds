@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
+  m_Name: hex_road_M_HexRuleSet
+  m_EditorClassIdentifier: 
+  hexRule:
+    name: RoadM
+    hexPrefab: {fileID: 8117975920188128148, guid: 665159e7a07b2bc4b99f520350e7f003,
+      type: 3}
+    connections:
+    - faceDirection: 0
+      allowedNeighborRules:
+      - hexRuleSet: {fileID: 11400000}
+        neighborFaceDirections: 00
+      - hexRuleSet: {fileID: 11400000, guid: 069867f68732ccd4fb47e555c3a53dd7, type: 2}
+        neighborFaceDirections: 0003
+      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
+        neighborFaceDirections: 0002
+    - faceDirection: 1
+      allowedNeighborRules:
+      - hexRuleSet: {fileID: 11400000}
+        neighborFaceDirections: 0102030405
+      - hexRuleSet: {fileID: 11400000, guid: 069867f68732ccd4fb47e555c3a53dd7, type: 2}
+        neighborFaceDirections: 01020405
+      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
+        neighborFaceDirections: 01030405
+    - faceDirection: 2
+      allowedNeighborRules:
+      - hexRuleSet: {fileID: 11400000}
+        neighborFaceDirections: 0102030405
+      - hexRuleSet: {fileID: 11400000, guid: 069867f68732ccd4fb47e555c3a53dd7, type: 2}
+        neighborFaceDirections: 01020405
+      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
+        neighborFaceDirections: 01030405
+    - faceDirection: 3
+      allowedNeighborRules:
+      - hexRuleSet: {fileID: 11400000}
+        neighborFaceDirections: 0102030405
+      - hexRuleSet: {fileID: 11400000, guid: 069867f68732ccd4fb47e555c3a53dd7, type: 2}
+        neighborFaceDirections: 04050102
+      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
+        neighborFaceDirections: 01030405
+    - faceDirection: 4
+      allowedNeighborRules:
+      - hexRuleSet: {fileID: 11400000}
+        neighborFaceDirections: 0102030405
+      - hexRuleSet: {fileID: 11400000, guid: 069867f68732ccd4fb47e555c3a53dd7, type: 2}
+        neighborFaceDirections: 04050102
+      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
+        neighborFaceDirections: 01030405
+    - faceDirection: 5
+      allowedNeighborRules:
+      - hexRuleSet: {fileID: 11400000}
+        neighborFaceDirections: 0102030405
+      - hexRuleSet: {fileID: 11400000, guid: 069867f68732ccd4fb47e555c3a53dd7, type: 2}
+        neighborFaceDirections: 05010204
+      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
+        neighborFaceDirections: 01030405

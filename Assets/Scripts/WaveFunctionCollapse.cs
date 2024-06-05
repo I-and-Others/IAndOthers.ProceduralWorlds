@@ -1,105 +1,99 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveFunctionCollapse : MonoBehaviour
 {
-    public List<CompatibilityRule> rules;
+    public enum CellState { Empty, Filled, Locked };
+    public int gridWidth = 10;
+    public int gridHeight = 10;
+    private CellState[,] grid;
+    private List<Vector2Int> possibleStates;
+    private System.Random random = new System.Random();
 
-    public void GenerateMap()
+    void Start()
     {
-        Hex[,] hexGrid = HexMapGenerator.Instance.hexGrid;
-        List<Hex> hexList = new List<Hex>();
-
-        foreach (var hex in hexGrid)
-        {
-            hexList.Add(hex);
-        }
-
-        while (hexList.Count > 0)
-        {
-            Hex hex = hexList[Random.Range(0, hexList.Count)];
-            hexList.Remove(hex);
-
-            CollapseHex(hex);
-        }
+        InitializeGrid();
+        WaveFunctionCollapseAlgorithm();
+        OnDrawGizmos();
     }
 
-    private void CollapseHex(Hex hex)
+    void InitializeGrid()
     {
-        // Select a random tile and rotation that fits the current constraints
-        var possibleTiles = GetPossibleTiles(hex);
-        if (possibleTiles.Count > 0)
+        grid = new CellState[gridWidth, gridHeight];
+        possibleStates = new List<Vector2Int>();
+
+        for (int x = 0; x < gridWidth; x++)
         {
-            var selectedTile = possibleTiles[Random.Range(0, possibleTiles.Count)];
-            ApplyTile(hex, selectedTile);
-        }
-    }
-
-    private List<CompatibilityRule> GetPossibleTiles(Hex hex)
-    {
-        List<CompatibilityRule> possibleTiles = new List<CompatibilityRule>();
-
-        foreach (var rule in rules)
-        {
-            bool isCompatible = true;
-
-            for (int i = 0; i < 6; i++)
+            for (int y = 0; y < gridHeight; y++)
             {
-                var neighbor = hex.neighbors[i];
-                if (neighbor != null)
-                {
-                    var neighborFace = (HexFaceDirectionEnum)i;
-                    var neighborState = neighbor.faceStates[i];
+                grid[x, y] = CellState.Empty;
+                possibleStates.Add(new Vector2Int(x, y));
+            }
+        }
+    }
 
-                    if (neighborState == FaceStateEnum.Locked)
-                    {
-                        isCompatible = false;
+    void WaveFunctionCollapseAlgorithm()
+    {
+        while (possibleStates.Count > 0)
+        {
+            Vector2Int cell = possibleStates[random.Next(possibleStates.Count)];
+            possibleStates.Remove(cell);
+
+            List<CellState> validStates = GetValidStates(cell);
+
+            if (validStates.Count == 0)
+            {
+                Debug.LogError("Contradiction found!");
+                return;
+            }
+
+            CellState chosenState = validStates[random.Next(validStates.Count)];
+            grid[cell.x, cell.y] = chosenState;
+
+            Propagate(cell);
+        }
+    }
+
+    List<CellState> GetValidStates(Vector2Int cell)
+    {
+        // For simplicity, this function returns all states. In a real implementation,
+        // you would check the rules to determine which states are valid for this cell.
+        return new List<CellState> { CellState.Empty, CellState.Filled, CellState.Locked };
+    }
+
+    void Propagate(Vector2Int cell)
+    {
+        // Implement your propagation logic here based on the rules you have set.
+        // This is a placeholder example that doesn't perform any real propagation.
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (grid == null) return;
+
+        Vector3 cellSize = new Vector3(1, 0.1f, 1);
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                Vector3 position = new Vector3(x, 0, y);
+
+                switch (grid[x, y])
+                {
+                    case CellState.Empty:
+                        Gizmos.color = Color.white;
+                        Gizmos.DrawWireCube(position, cellSize);
                         break;
-                    }
-
-                    var neighborRule = rules.Find(r => r.prefabId == neighbor.id);
-                    if (neighborRule != null)
-                    {
-                        bool faceCompatible = false;
-                        foreach (var connection in neighborRule.faceConnections[neighborFace])
-                        {
-                            if (connection.targetPrefabId == rule.prefabId)
-                            {
-                                faceCompatible = true;
-                                break;
-                            }
-                        }
-
-                        if (!faceCompatible)
-                        {
-                            isCompatible = false;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (isCompatible)
-            {
-                possibleTiles.Add(rule);
-            }
-        }
-
-        return possibleTiles;
-    }
-
-    private void ApplyTile(Hex hex, CompatibilityRule rule)
-    {
-        hex.id = rule.prefabId;
-        for (int i = 0; i < 6; i++)
-        {
-            var faceDirection = (HexFaceDirectionEnum)i;
-            foreach (var connection in rule.faceConnections[faceDirection])
-            {
-                var neighbor = hex.neighbors[i];
-                if (neighbor != null)
-                {
-                    neighbor.faceStates[(i + 3) % 6] = FaceStateEnum.Filled;
+                    case CellState.Filled:
+                        Gizmos.color = Color.green;
+                        Gizmos.DrawCube(position, cellSize);
+                        break;
+                    case CellState.Locked:
+                        Gizmos.color = Color.black;
+                        Gizmos.DrawCube(position, cellSize);
+                        break;
                 }
             }
         }
