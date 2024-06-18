@@ -11,7 +11,7 @@ public class WFCManagerEditor : Editor
         WFCManager wfcManager = (WFCManager)target;
         if (GUILayout.Button("Initialize Possible Tile Sets"))
         {
-            wfcManager.InitializePossibleTileSets();
+            wfcManager.StartWaveFunctionCollapse();
         }
 
         if (GUILayout.Button("Collapse Next"))

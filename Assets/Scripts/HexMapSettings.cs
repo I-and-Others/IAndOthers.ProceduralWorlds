@@ -8,7 +8,6 @@ public class HexMapSettings
     public int mapWidth;
     public int mapHeight;
     public float hexSize;
-    public HexOrientationEnum hexOrientation;
     public float hexWidth;
     public float hexHeight;
 }

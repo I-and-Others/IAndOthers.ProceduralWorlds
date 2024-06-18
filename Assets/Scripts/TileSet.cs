@@ -5,30 +5,32 @@ public class TileSet : ScriptableObject
 {
     public string tileSetName;
     public GameObject hexPrefab;
-    public FaceTypeEnum east;
-    public FaceTypeEnum southEast;
-    public FaceTypeEnum southWest;
-    public FaceTypeEnum west;
-    public FaceTypeEnum northWest;
-    public FaceTypeEnum northEast;
+    public HexRotationEnum rotationDegree;
+    public HexDirectionConnectionTypeEnum east;
+    public HexDirectionConnectionTypeEnum southEast;
+    public HexDirectionConnectionTypeEnum southWest;
+    public HexDirectionConnectionTypeEnum west;
+    public HexDirectionConnectionTypeEnum northWest;
+    public HexDirectionConnectionTypeEnum northEast;
 
-    public FaceTypeEnum GetFaceType(HexFaceDirectionEnum direction, HexRotationEnum rotation)
+    public HexDirectionConnectionTypeEnum GetFaceType(HexMainDirectionEnum direction)
     {
-        int index = ((int)direction + (int)rotation) % 6;
-        return GetFaceTypeByIndex(index);
-    }
-
-    public FaceTypeEnum GetFaceTypeByIndex(int index)
-    {
-        switch (index)
+        switch (direction)
         {
-            case 0: return east;
-            case 1: return southEast;
-            case 2: return southWest;
-            case 3: return west;
-            case 4: return northWest;
-            case 5: return northEast;
-            default: return FaceTypeEnum.Empty;
+            case HexMainDirectionEnum.East:
+                return east;
+            case HexMainDirectionEnum.SouthEast:
+                return southEast;
+            case HexMainDirectionEnum.SouthWest:
+                return southWest;
+            case HexMainDirectionEnum.West:
+                return west;
+            case HexMainDirectionEnum.NorthWest:
+                return northWest;
+            case HexMainDirectionEnum.NorthEast:
+                return northEast;
+            default:
+                return HexDirectionConnectionTypeEnum.None;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public enum FaceStateEnum : byte
+public enum FaceStateEnum : int
 {
     Empty,
     Filled,
