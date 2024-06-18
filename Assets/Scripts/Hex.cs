@@ -1,28 +1,51 @@
-﻿using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
+
+[System.Serializable]
+public class PossibleTileSet
+{
+    public TileSet tileSet;
+    public List<HexRotationEnum> rotations;
+
+    public PossibleTileSet(TileSet tileSet, List<HexRotationEnum> rotations)
+    {
+        this.tileSet = tileSet;
+        this.rotations = rotations;
+    }
+}
 
 public class Hex : MonoBehaviour
 {
-    public int id; // Unique identifier for each hex prefab
-    public Vector2Int coordinates; // Hex coordinates in offset
-    public Vector2Int axialCoordinates; // Axial coordinates
-    public FaceStateEnum[] faceStates = new FaceStateEnum[6]; // Array to store the state of each face
+    public Vector2Int coordinates;
+    public Vector2Int axialCoordinates;
+    public FaceTypeEnum[] faceTypes = new FaceTypeEnum[6];
     public Hex[] neighbors = new Hex[6];
+    public TileSet currentTileSet;
+    public HexRotationEnum currentRotation;
+    [SerializeField]
+    public List<PossibleTileSet> possibleTileSets = new List<PossibleTileSet>();
 
     public void Initialize(Vector2Int coords)
     {
         coordinates = coords;
         axialCoordinates = OffsetToAxial(coords);
-        for (int i = 0; i < faceStates.Length; i++)
+        for (int i = 0; i < faceTypes.Length; i++)
         {
-            faceStates[i] = FaceStateEnum.Empty;
+            faceTypes[i] = FaceTypeEnum.Empty;
         }
     }
 
-    public void UpdateFaceState(int faceIndex, FaceStateEnum state)
+    public FaceTypeEnum GetFaceType(HexFaceDirectionEnum direction, HexRotationEnum rotation)
     {
-        faceStates[faceIndex] = state;
+        int index = ((int)direction + (int)rotation) % 6;
+        return faceTypes[index];
+    }
+
+    public FaceTypeEnum GetFaceType(HexFaceDirectionEnum direction)
+    {
+        int index = ((int)direction + (int)currentRotation) % 6;
+        return faceTypes[index];
     }
 
     private Vector2Int OffsetToAxial(Vector2Int offset)
@@ -45,64 +68,41 @@ public class Hex : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 0.1f);
 
         Vector3[] facePositions = {
-            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, 0.5f), // NorthEast
-            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, 0.25f), // East
-            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, -0.25f), // SouthEast
-            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, -0.5f), // SouthWest
-            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, -0.25f), // West
-            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, 0.25f) // NorthWest
+            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, 0.5f),
+            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, 0.25f),
+            Quaternion.Euler(0, 30, 0) * new Vector3(0.433f, 0, -0.25f),
+            Quaternion.Euler(0, 30, 0) * new Vector3(0, 0, -0.5f),
+            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, -0.25f),
+            Quaternion.Euler(0, 30, 0) * new Vector3(-0.433f, 0, 0.25f)
         };
 
         Color[] faceColors = {
-            Color.red,    // NorthEast
-            Color.green,  // East
-            Color.blue,   // SouthEast
-            Color.yellow, // SouthWest
-            Color.magenta,// West
-            Color.cyan    // NorthWest
-        };
-        string[] directionLabels =
-        {
-            "NE", // NorthEast
-            "E",  // East
-            "SE", // SouthEast
-            "SW", // SouthWest
-            "W",  // West
-            "NW"  // NorthWest
+            Color.red,
+            Color.green,
+            Color.blue,
+            Color.yellow,
+            Color.magenta,
+            Color.cyan
         };
 
+        string[] directionLabels = {
+            "NE", "E", "SE", "SW", "W", "NW"
+        };
 
         for (int i = 0; i < facePositions.Length; i++)
         {
             Gizmos.color = faceColors[i];
             Gizmos.DrawLine(transform.position, transform.position + facePositions[i]);
-
-            switch (faceStates[i])
-            {
-                case FaceStateEnum.Empty:
-                    Gizmos.color = Color.white;
-                    Gizmos.DrawWireSphere(transform.position + facePositions[i], 0.1f);
-                    break;
-                case FaceStateEnum.Filled:
-                    Gizmos.color = faceColors[i];
-                    Gizmos.DrawSphere(transform.position + facePositions[i], 0.1f);
-                    break;
-                case FaceStateEnum.Locked:
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawSphere(transform.position + facePositions[i], 0.1f);
-                    break;
-            }
-
-            // Draw the direction label
-            GUIStyle labelStyle = new GUIStyle();
-            labelStyle.normal.textColor = faceColors[i];
-            Handles.Label(transform.position + facePositions[i] * 1.5f, directionLabels[i], labelStyle);
-
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(transform.position + facePositions[i], 0.1f);
+            Handles.Label(transform.position + facePositions[i] * 1.5f, directionLabels[i], new GUIStyle { normal = { textColor = faceColors[i] } });
         }
 
-        // Draw the coordinates as text
-        GUIStyle style = new GUIStyle();
-        style.normal.textColor = Color.white;
-        Handles.Label(transform.position + new Vector3(-0.2f, -0.2f, 0.8f), $"({coordinates.x}, {coordinates.y})", style);
+        Handles.Label(transform.position + new Vector3(-0.2f, -0.2f, 0.8f), $"({coordinates.x}, {coordinates.y})", new GUIStyle { normal = { textColor = Color.white } });
+
+        if (possibleTileSets != null && possibleTileSets.Count > 0)
+        {
+            Handles.Label(transform.position + Vector3.up * 0.5f, $"Possible: {possibleTileSets.Count}", new GUIStyle { normal = { textColor = Color.yellow } });
+        }
     }
 }

@@ -8,16 +8,10 @@ public class HexMapGeneratorEditor : Editor
     {
         DrawDefaultInspector();
 
-        HexMapGenerator generator = (HexMapGenerator)target;
-
+        HexMapGenerator hexMapGenerator = (HexMapGenerator)target;
         if (GUILayout.Button("Generate Hex Map"))
         {
-            generator.GenerateHexMap();
-        }
-
-        if (GUILayout.Button("Start Wave Function Collapse"))
-        {
-            generator.StartWaveFunctionCollapse();
+            hexMapGenerator.GenerateHexMap();
         }
     }
 }

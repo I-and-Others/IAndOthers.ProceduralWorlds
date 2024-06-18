@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
-  m_Name: hex_road_B_HexRuleSet
+  m_Name: hex_grass_HexRuleSet
   m_EditorClassIdentifier: 
-  tileSetName: RoadB
-  hexPrefab: {fileID: 7080597703993174847, guid: 9596ad777734d3a4fa72c9f65ff9ec0d,
+  tileSetName: RoadGrass
+  hexPrefab: {fileID: 5434157206522577229, guid: ab5c434d9d9b5064886dc79df7bdff41,
     type: 3}
-  east: 2
+  east: 1
   southEast: 1
-  southWest: 2
+  southWest: 1
   west: 1
   northWest: 1
   northEast: 1

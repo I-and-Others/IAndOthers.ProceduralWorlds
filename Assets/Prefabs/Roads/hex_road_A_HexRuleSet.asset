@@ -12,56 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
   m_Name: hex_road_A_HexRuleSet
   m_EditorClassIdentifier: 
-  hexRule:
-    name: RoadA
-    hexPrefab: {fileID: 5182725529746204515, guid: 3e997af846bafb84f9c36ae121166c66,
-      type: 3}
-    connections:
-    - faceDirection: 0
-      allowedNeighborRules:
-      - hexRuleSet: {fileID: 11400000}
-        neighborFaceDirections: 0003
-      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
-        neighborFaceDirections: 0002
-      - hexRuleSet: {fileID: 11400000, guid: 12e3014f14edbb64c9c01da1aa61ee92, type: 2}
-        neighborFaceDirections: 00
-    - faceDirection: 1
-      allowedNeighborRules:
-      - hexRuleSet: {fileID: 11400000}
-        neighborFaceDirections: 01020405
-      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
-        neighborFaceDirections: 01030405
-      - hexRuleSet: {fileID: 11400000, guid: 12e3014f14edbb64c9c01da1aa61ee92, type: 2}
-        neighborFaceDirections: 0102030405
-    - faceDirection: 2
-      allowedNeighborRules:
-      - hexRuleSet: {fileID: 11400000}
-        neighborFaceDirections: 02040501
-      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
-        neighborFaceDirections: 03040501
-      - hexRuleSet: {fileID: 11400000, guid: 12e3014f14edbb64c9c01da1aa61ee92, type: 2}
-        neighborFaceDirections: 0203040501
-    - faceDirection: 3
-      allowedNeighborRules:
-      - hexRuleSet: {fileID: 11400000}
-        neighborFaceDirections: 0300
-      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
-        neighborFaceDirections: 0200
-      - hexRuleSet: {fileID: 11400000, guid: 12e3014f14edbb64c9c01da1aa61ee92, type: 2}
-        neighborFaceDirections: 00
-    - faceDirection: 4
-      allowedNeighborRules:
-      - hexRuleSet: {fileID: 11400000}
-        neighborFaceDirections: 04050102
-      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
-        neighborFaceDirections: 04050103
-      - hexRuleSet: {fileID: 11400000, guid: 12e3014f14edbb64c9c01da1aa61ee92, type: 2}
-        neighborFaceDirections: 0405010203
-    - faceDirection: 5
-      allowedNeighborRules:
-      - hexRuleSet: {fileID: 11400000}
-        neighborFaceDirections: 05010204
-      - hexRuleSet: {fileID: 11400000, guid: 2d5c670393f22604ab87bfcb1e241d09, type: 2}
-        neighborFaceDirections: 05010304
-      - hexRuleSet: {fileID: 11400000, guid: 12e3014f14edbb64c9c01da1aa61ee92, type: 2}
-        neighborFaceDirections: 0501020304
+  tileSetName: RoadA
+  hexPrefab: {fileID: 5182725529746204515, guid: 3e997af846bafb84f9c36ae121166c66,
+    type: 3}
+  east: 2
+  southEast: 1
+  southWest: 1
+  west: 2
+  northWest: 1
+  northEast: 1
