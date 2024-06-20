@@ -126,8 +126,6 @@ public class WFCManager : MonoBehaviour
         {
             Hex currentHex = propagationQueue.Dequeue();
 
-            Debug.Log($"Propagating from hex: {currentHex.coordinates}");
-
             foreach (HexMainDirectionEnum direction in System.Enum.GetValues(typeof(HexMainDirectionEnum)))
             {
                 Hex neighbor = currentHex.neighbors[(int)direction];
@@ -136,18 +134,21 @@ public class WFCManager : MonoBehaviour
                     continue;
                 }
 
-                Debug.Log($"Checking neighbor at direction: {direction}");
-
                 int oppositeDirectionInt = ((int)direction + 3) % 6;
                 HexMainDirectionEnum oppositeDirection = (HexMainDirectionEnum)oppositeDirectionInt;
-                HexDirectionConnectionTypeEnum requiredFaceType = currentHex.currentTileSet?.GetFaceType(oppositeDirection) ?? HexDirectionConnectionTypeEnum.None;
 
-                Debug.Log($"Required face type: {requiredFaceType} for neighbor at direction: {oppositeDirection}");
+                if (currentHex.currentTileSet == null)
+                {
+                    continue;
+                }
 
                 List<TileSet> validTileSets = new List<TileSet>();
                 foreach (var possibleTileSet in neighbor.possibleTileSets)
                 {
-                    if (possibleTileSet.GetFaceType(oppositeDirection) == requiredFaceType)
+                    var requiredFaceType = currentHex.currentTileSet?.GetFaceType(direction) ?? HexDirectionConnectionTypeEnum.None;
+                    var faceType = possibleTileSet.GetFaceType(oppositeDirection);
+
+                    if (requiredFaceType == faceType)
                     {
                         validTileSets.Add(possibleTileSet);
                     }
@@ -157,14 +158,12 @@ public class WFCManager : MonoBehaviour
                 {
                     neighbor.possibleTileSets = validTileSets;
                     propagationQueue.Enqueue(neighbor);
-                    Debug.Log($"Updated possible tile sets for neighbor at {neighbor.coordinates}");
                 }
 
                 if (validTileSets.Count == 1)
                 {
                     Collapse(neighbor);
                     propagationQueue.Enqueue(neighbor);
-                    Debug.Log($"Collapsed neighbor at {neighbor.coordinates}");
                 }
             }
         }

@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
   m_Name: Road_M_60
   m_EditorClassIdentifier: 
-  tileSetName: Road_M_0
+  tileSetName: Road_M_60
   hexPrefab: {fileID: 8117975920188128148, guid: 665159e7a07b2bc4b99f520350e7f003,
     type: 3}
-  east: 2
-  southEast: 1
+  rotationDegree: 60
+  east: 1
+  southEast: 2
   southWest: 1
   west: 1
   northWest: 1
