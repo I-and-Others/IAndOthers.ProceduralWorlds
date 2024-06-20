@@ -15,6 +15,7 @@ MonoBehaviour:
   tileSetName: RoadL
   hexPrefab: {fileID: 7954899905659554595, guid: ec81a14ff71cac548afcca76353acdba,
     type: 3}
+  rotationDegree: 0
   east: 2
   southEast: 2
   southWest: 2
