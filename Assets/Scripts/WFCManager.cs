@@ -42,6 +42,31 @@ public class WFCManager : MonoBehaviour
         }
     }
 
+    public void CompleteWaveFunctionCollapse()
+    {
+        while (true)
+        {
+            CollapseNext();
+            if (IsWaveFunctionCollapsed())
+            {
+                break;
+            }
+        }
+    }
+
+    private bool IsWaveFunctionCollapsed()
+    {
+        foreach (var hex in hexMapGenerator.hexGrid)
+        {
+            if (hex != null && hex.possibleTileSets.Count > 1)
+            {
+                return false; // Found a hex that hasn't collapsed to a single state
+            }
+        }
+        return true; // All hexes have collapsed to a single state
+    }
+
+
     public void StartWaveFunctionCollapse()
     {
         InitializePossibleTileSets();

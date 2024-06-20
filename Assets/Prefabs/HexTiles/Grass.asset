@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
-  m_Name: hex_grass_HexRuleSet
+  m_Name: Grass
   m_EditorClassIdentifier: 
   tileSetName: RoadGrass
   hexPrefab: {fileID: 5434157206522577229, guid: ab5c434d9d9b5064886dc79df7bdff41,

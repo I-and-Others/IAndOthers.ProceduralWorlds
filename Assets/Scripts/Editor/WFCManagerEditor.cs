@@ -18,5 +18,10 @@ public class WFCManagerEditor : Editor
         {
             wfcManager.CollapseNext();
         }
+
+        if (GUILayout.Button("Finish Wave Function Collapse"))
+        {
+            wfcManager.CompleteWaveFunctionCollapse();
+        }
     }
 }
