@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
   m_Name: Road_I_240
   m_EditorClassIdentifier: 
-  tileSetName: Road_H_240
-  hexPrefab: {fileID: 7336227272103717585, guid: 0107b9c6ec0dd5144b238ae4070f5952,
+  tileSetName: Road_I_240
+  hexPrefab: {fileID: 2605254084198611085, guid: 89de7088980062140952d0620b6bfe13,
     type: 3}
   rotationDegree: 240
-  east: 1
-  southEast: 2
-  southWest: 1
+  east: 2
+  southEast: 1
+  southWest: 2
   west: 2
-  northWest: 2
+  northWest: 1
   northEast: 2

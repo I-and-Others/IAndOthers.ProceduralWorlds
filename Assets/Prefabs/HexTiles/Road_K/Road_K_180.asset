@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948efe144e76ba24cb22563d16e0255f, type: 3}
-  m_Name: hex_road_K_HexRuleSet
+  m_Name: Road_K_180
   m_EditorClassIdentifier: 
-  tileSetName: RoadK
+  tileSetName: Road_K_180
   hexPrefab: {fileID: 1707960084275710638, guid: 54a092aaf50ec7b42b95aef6ed5f658f,
     type: 3}
-  east: 2
-  southEast: 2
-  southWest: 2
-  west: 1
-  northWest: 2
-  northEast: 2
+  rotationDegree: 180
+  east: 0
+  southEast: 0
+  southWest: 0
+  west: 0
+  northWest: 0
+  northEast: 0
