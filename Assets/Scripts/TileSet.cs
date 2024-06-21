@@ -13,24 +13,23 @@ public class TileSet : ScriptableObject
     public HexDirectionConnectionTypeEnum northWest;
     public HexDirectionConnectionTypeEnum northEast;
 
-    public HexDirectionConnectionTypeEnum GetFaceType(HexMainDirectionEnum direction)
+    public HexDirectionConnectionTypeEnum GetFaceType(HexMainDirectionEnum direction, HexRotationEnum rotation)
     {
-        switch (direction)
+        HexDirectionConnectionTypeEnum[] faceTypes = new HexDirectionConnectionTypeEnum[6];
+        faceTypes[0] = east;
+        faceTypes[1] = southEast;
+        faceTypes[2] = southWest;
+        faceTypes[3] = west;
+        faceTypes[4] = northWest;
+        faceTypes[5] = northEast;
+
+        int rotationSteps = ((int)rotation / 60) % 6;
+        HexDirectionConnectionTypeEnum[] rotatedFaceTypes = new HexDirectionConnectionTypeEnum[6];
+        for (int i = 0; i < 6; i++)
         {
-            case HexMainDirectionEnum.East:
-                return east;
-            case HexMainDirectionEnum.SouthEast:
-                return southEast;
-            case HexMainDirectionEnum.SouthWest:
-                return southWest;
-            case HexMainDirectionEnum.West:
-                return west;
-            case HexMainDirectionEnum.NorthWest:
-                return northWest;
-            case HexMainDirectionEnum.NorthEast:
-                return northEast;
-            default:
-                return HexDirectionConnectionTypeEnum.None;
+            rotatedFaceTypes[i] = faceTypes[(i + 6 - rotationSteps) % 6];
         }
+
+        return rotatedFaceTypes[(int)direction];
     }
 }

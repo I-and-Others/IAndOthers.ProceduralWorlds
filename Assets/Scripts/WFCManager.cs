@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WFCManager : MonoBehaviour
@@ -35,7 +36,20 @@ public class WFCManager : MonoBehaviour
                 Hex hex = hexMapGenerator.hexGrid[x, y];
                 if (hex != null)
                 {
-                    List<TileSet> possibleTileSets = new List<TileSet>(tileSets);
+                    List<PossibleTileSet> possibleTileSets = new List<PossibleTileSet>();
+                    foreach (var tileSet in tileSets)
+                    {
+                        List<HexRotationEnum> rotations = new List<HexRotationEnum>
+                        {
+                            HexRotationEnum.Deg0,
+                            HexRotationEnum.Deg60,
+                            HexRotationEnum.Deg120,
+                            HexRotationEnum.Deg180,
+                            HexRotationEnum.Deg240,
+                            HexRotationEnum.Deg300
+                        };
+                        possibleTileSets.Add(new PossibleTileSet(tileSet, rotations));
+                    }
                     hex.possibleTileSets = possibleTileSets;
                 }
             }
@@ -65,7 +79,6 @@ public class WFCManager : MonoBehaviour
         }
         return true; // All hexes have collapsed to a single state
     }
-
 
     public void StartWaveFunctionCollapse()
     {
@@ -119,25 +132,26 @@ public class WFCManager : MonoBehaviour
 
     private void Collapse(Hex hex)
     {
-        List<TileSet> possibleTileSets = hex.possibleTileSets;
-        TileSet selectedTileSet = possibleTileSets[Random.Range(0, possibleTileSets.Count)];
+        List<PossibleTileSet> possibleTileSets = hex.possibleTileSets;
+        PossibleTileSet selectedTileSet = possibleTileSets[Random.Range(0, possibleTileSets.Count)];
+        TileSet selectedTile = selectedTileSet.tileSet;
+        HexRotationEnum selectedRotation = selectedTileSet.possibleRotations[Random.Range(0, selectedTileSet.possibleRotations.Count)];
 
-        hex.currentTileSet = selectedTileSet;
+        hex.currentTileSet = selectedTile;
+        hex.currentRotation = selectedRotation;
 
         // Set the mesh filter of the hex to the selected tile set's mesh
         MeshFilter meshFilter = hex.GetComponent<MeshFilter>();
-        if (meshFilter != null && selectedTileSet.hexPrefab != null)
+        if (meshFilter != null && selectedTile.hexPrefab != null)
         {
-            MeshFilter prefabMeshFilter = selectedTileSet.hexPrefab.GetComponent<MeshFilter>();
+            MeshFilter prefabMeshFilter = selectedTile.hexPrefab.GetComponent<MeshFilter>();
             if (prefabMeshFilter != null)
             {
                 meshFilter.mesh = prefabMeshFilter.sharedMesh;
             }
         }
-        // Set the rotation of the hex to the selected tile set's rotation
-        var hexRotation = selectedTileSet.rotationDegree;
-        hex.currentRotation = hexRotation;
-        hex.transform.rotation = Quaternion.Euler(0, (int)hexRotation, 0);
+        // Set the rotation of the hex to the selected rotation
+        hex.transform.rotation = Quaternion.Euler(0, (int)selectedRotation, 0);
 
         hex.possibleTileSets.Clear();
     }
@@ -167,19 +181,29 @@ public class WFCManager : MonoBehaviour
                     continue;
                 }
 
-                List<TileSet> validTileSets = new List<TileSet>();
+                HexDirectionConnectionTypeEnum requiredFaceType = currentHex.currentTileSet.GetFaceType(direction, currentHex.currentRotation);
+
+                List<PossibleTileSet> validTileSets = new List<PossibleTileSet>();
                 foreach (var possibleTileSet in neighbor.possibleTileSets)
                 {
-                    var requiredFaceType = currentHex.currentTileSet?.GetFaceType(direction) ?? HexDirectionConnectionTypeEnum.None;
-                    var faceType = possibleTileSet.GetFaceType(oppositeDirection);
-
-                    if (requiredFaceType == faceType)
+                    List<HexRotationEnum> validRotations = new List<HexRotationEnum>();
+                    foreach (var rotation in possibleTileSet.possibleRotations)
                     {
-                        validTileSets.Add(possibleTileSet);
+                        var faceType = possibleTileSet.tileSet.GetFaceType(oppositeDirection, rotation);
+
+                        if (requiredFaceType == faceType)
+                        {
+                            validRotations.Add(rotation);
+                        }
+                    }
+
+                    if (validRotations.Count > 0)
+                    {
+                        validTileSets.Add(new PossibleTileSet(possibleTileSet.tileSet, validRotations));
                     }
                 }
 
-                if (validTileSets.Count != neighbor.possibleTileSets.Count)
+                if (!AreTileSetsEqual(neighbor.possibleTileSets, validTileSets))
                 {
                     neighbor.possibleTileSets = validTileSets;
                     propagationQueue.Enqueue(neighbor);
@@ -192,5 +216,24 @@ public class WFCManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool AreTileSetsEqual(List<PossibleTileSet> current, List<PossibleTileSet> updated)
+    {
+        if (current.Count != updated.Count)
+        {
+            return false;
+        }
+
+        foreach (var currentTileSet in current)
+        {
+            var updatedTileSet = updated.Find(t => t.tileSet == currentTileSet.tileSet);
+            if (updatedTileSet == null || !currentTileSet.possibleRotations.SequenceEqual(updatedTileSet.possibleRotations))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
