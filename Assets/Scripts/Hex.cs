@@ -25,6 +25,29 @@ public class Hex : MonoBehaviour
         return new Vector2Int(q, r);
     }
 
+    public void SetTileSet(TileSet tileSet)
+    {
+        currentTileSet = tileSet;
+
+        // Set the mesh filter of the hex to the selected tile set's mesh
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        if (meshFilter != null && tileSet.hexPrefab != null)
+        {
+            MeshFilter prefabMeshFilter = tileSet.hexPrefab.GetComponent<MeshFilter>();
+            if (prefabMeshFilter != null)
+            {
+                meshFilter.mesh = prefabMeshFilter.sharedMesh;
+            }
+        }
+
+        // Set the rotation of the hex to the selected tile set's rotation
+        var hexRotation = tileSet.rotationDegree;
+        currentRotation = hexRotation;
+        transform.rotation = Quaternion.Euler(0, (int)hexRotation, 0);
+
+        possibleTileSets.Clear();
+    }
+
     private void OnDrawGizmos()
     {
         Vector3[] facePositions =

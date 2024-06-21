@@ -236,4 +236,54 @@ public class WFCManager : MonoBehaviour
 
         return true;
     }
+
+    public void CollapseOuterHexagonsAsWater()
+    {
+        if (!initialized)
+        {
+            Debug.LogError("Wave Function Collapse has not been initialized. Call StartWaveFunctionCollapse first.");
+            return;
+        }
+
+        TileSet waterTileSet = null;
+
+        // Find the water tile set
+        foreach (var tileSet in tileSets)
+        {
+            if (tileSet.tileSetName == "Coast_Water") // Adjust the name as necessary
+            {
+                waterTileSet = tileSet;
+                break;
+            }
+        }
+
+        if (waterTileSet == null)
+        {
+            Debug.LogError("Water tile set not found.");
+            return;
+        }
+
+        int width = hexMapGenerator.hexGrid.GetLength(0);
+        int height = hexMapGenerator.hexGrid.GetLength(1);
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (IsEdgeHexagon(x, y, width, height))
+                {
+                    Hex hex = hexMapGenerator.hexGrid[x, y];
+                    if (hex.currentTileSet == null)
+                    { 
+                        hex.SetTileSet(waterTileSet);
+                    }
+                }
+            }
+        }
+    }
+
+    private bool IsEdgeHexagon(int x, int y, int width, int height)
+    {
+        return x == 0 || y == 0 || x == width - 1 || y == height - 1;
+    }
 }

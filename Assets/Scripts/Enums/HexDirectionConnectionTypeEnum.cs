@@ -5,5 +5,7 @@ public enum HexDirectionConnectionTypeEnum : int
     None,
     Grass,
     Road,
-    River
+    River,
+    Coast,
+    Water
 }
